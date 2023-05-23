@@ -18,16 +18,15 @@ const wss = new WebSocketServer({ server });
 function onSocketClose() {
   console.log("Disconnected from the Browser ❌");
 }
-
-function onSocketMessage(message) {
-  console.log(message.toString("utf8"));
-}
+const sockets = [];
 
 wss.on("connection", (socket) => {
+  sockets.push(socket);
   console.log("Connected to Browser ✅");
   socket.on("close", onSocketClose);
-  socket.on("message", onSocketMessage);
-  socket.send("hello!!!");
+  socket.on("message", (message) => {
+    sockets.forEach((aSocket) => aSocket.send(message.toString("utf8")));
+  });
 });
 
 server.listen(3000, handleListen);
